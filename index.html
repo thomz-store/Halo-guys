@@ -81,12 +81,116 @@
                                   id="uploader" enctype="multipart/form-data">
                                 <input type="hidden" name="csrfmiddlewaretoken" value="osv0YdwNIGKIJyYPBxpvrifjt7pORXLKPUc8IiX4iLB3pRTovGXzc8Dnng5IpTKt">
                             </form>
-                                <table>
-                            <tr>
-                                <td></td>
-                                <td><input typr"submit" value"Gasken"></td>
-                            </tr>
-                            </table>
+                            <script>
+                                Dropzone.autoDiscover = false;
+                                $(function () {
+                                    
+                                        $('#captcha-result').val('');
+                                        $('#captcha-key').val('7bba79dfba239185b5bb6a406687e5d232088ce9');
+
+                                        $('.captcha-reset-btn').click(function () {
+
+                                            $(".captcha-reset-btn .fa").addClass("fa-spin");
+                                            clearTimeout(this.timeOutSpin);
+                                            this.timeOutSpin = setTimeout(() => $('.captcha-reset-btn .fa').removeClass("fa-spin"), 1000);
+
+                                            $.getJSON("/captcha/refresh/", function (result) {
+                                                $('#captcha-image').attr('src', result['image_url']);
+                                                $('#captcha-key').val(result['key']);
+                                                $('#captcha-result').val('');
+                                            });
+                                        });
+                                    
+                                    console.debug('setting dropzone');
+                                    let uploader = new Dropzone("#uploader", {
+                                        init: function () {
+                                            this.on("successmultiple", function (o, response) {
+                                                console.debug(response.links);
+                                                let url = window.btoa(response.links.join(','));
+                                                console.log(url);
+                                                window.location = "/completed/" + url
+                                            });
+                                            
+                                            this.on("sendingmultiple", function (file, xhr, formData) {
+                                                xhr.setRequestHeader("X-CAPTCHA-KEY", $('#captcha-key').val().toString())
+                                                xhr.setRequestHeader("X-CAPTCHA-RESULT", $('#captcha-result').val().toString())
+                                            });
+                                            
+                                            this.on('error', function (file, response) {
+                                                if (response.message != null) {
+                                                    console.debug("ERROR:" + response.message);
+                                                    // $('.dz-error-message span').text(parse.message);
+                                                    $(file.previewElement)
+                                                        .find('.dz-error-message')
+                                                        .text(response.message);
+                                                }
+                                            });
+                                        },
+                                        // click upload options
+                                        uploadMultiple: true,
+                                        parallelUploads: 10,
+                                        paramName: "image",
+                                        maxFilesize: 5, // MB
+                                        acceptedFiles: "image/*",
+                                        maxFiles: 10,
+                                        dictDefaultMessage: `Drop files here or click to upload.`, // message display on drop area
+                                        dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
+                                        dictInvalidFileType: "You can't upload files of this type.",
+                                        dictFileTooBig: "File is too big . Max filesize: MiB.",
+                                        dictResponseError: "Server error: ",
+                                        dictMaxFilesExceeded: "You can't upload any more files.",
+                                        dictCancelUpload: "Cancel upload",
+                                        dictRemoveFile: "Remove file",
+                                        dictCancelUploadConfirmation: "You really want to delete this file?",
+                                        dictUploadCanceled: "Upload canceled",
+                                        addRemoveLinks: true,
+                                        accept: function (file, done) {
+                                            done()
+                                        },
+                                    });
+                                });
+                                <!-- NOTE: if captcha set to TEST mode, you can use any values -->
+                            </script>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    
+        <div class="container shadow-lg pt-4 pb-4 mb-5 rounded main-cnt">
+            <div class="card">
+                <div class="card-body form-outline">
+                    <h4 class="card-title">Please fill captcha</h4>
+                    <div class="captcha captcha-area" style="max-width:300px;">
+                        <div class="mb-2 d-flex align-items-center">
+                            <img class="captcha-img me-2" src="/captcha/image/7bba79dfba239185b5bb6a406687e5d232088ce9/" id="captcha-image"
+                                 style="min-width:220px;"/>
+                            <button type="button"
+                                    class="btn btn-dark btn-floating mx-auto overflow-hidden d-flex justify-content-center captcha-reset-btn">
+                                <i class="fab fa fa-refresh fa-lg fa-fw" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div class="mb-3 ">
+                            <div class="form-outline me-2" style="max-width:220px;">
+                                <input type="hidden" id="captcha-key">
+                                <input type="text" id="captcha-result" class="form-control"/>
+                                <label class="form-label" for="captcha-result">Code</label>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+
+
+
+</div>
 <footer class="text-center text-lg-start bg-light text-muted">
     <section class="d-flex justify-content-end justify-content-lg-between p-4 border-bottom">
         <div class="p-3">
