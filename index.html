@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Just Pictures upload site">
-    <title>THOMZ STORE</title>
+    <title>Deposit Hosting </title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
     <link
@@ -46,7 +46,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Navbar brand -->
 
-            <a class="navbar-brand mt-2 mt-lg-0" href="/">THOMVELZ STORE</a>
+            <a class="navbar-brand mt-2 mt-lg-0" href="/">Deposit Hosting</a>
             
         </div>
         <!-- Collapsible wrapper -->
@@ -69,133 +69,38 @@
     </header>
 
     
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">UPLOUD DI SINI</h4>
-            <h6 class="card-subtitle mb-2 text-muted">Hanya gambar yang diterima. Hingga 10 gambar per waktu.</h6>
-            <div class="lead">
-                <div class="container post-container pt-1">
-                    <div class="card shadow bg-white mt-3 mb-3">
-                        <div class="card-body">
-                            <form action="/upload"
-                                  method="POST" class="post-form dropzone"
-                                  id="uploader" enctype="multipart/form-data">
-                                <input type="hidden" name="csrfmiddlewaretoken" value="7lKvbsAW37xCPP0dpjJzK1x80uZEowgoKUlQWRoU8JIFiN05gzSR2kQpx5mwu9FY">
-                            </form>
-                            <script>
-                                Dropzone.autoDiscover = false;
-                                $(function () {
-                                    
-                                        $('#captcha-result').val('');
-                                        $('#captcha-key').val('4a5fe3e1e6304222595a0dde9690030d2b702009');
-
-                                        $('.captcha-reset-btn').click(function () {
-
-                                            $(".captcha-reset-btn .fa").addClass("fa-spin");
-                                            clearTimeout(this.timeOutSpin);
-                                            this.timeOutSpin = setTimeout(() => $('.captcha-reset-btn .fa').removeClass("fa-spin"), 1000);
-
-                                            $.getJSON("/captcha/refresh/", function (result) {
-                                                $('#captcha-image').attr('src', result['image_url']);
-                                                $('#captcha-key').val(result['key']);
-                                                $('#captcha-result').val('');
-                                            });
-                                        });
-                                    
-                                    console.debug('setting dropzone');
-                                    let uploader = new Dropzone("#uploader", {
-                                        init: function () {
-                                            this.on("successmultiple", function (o, response) {
-                                                console.debug(response.links);
-                                                let url = window.btoa(response.links.join(','));
-                                                console.log(url);
-                                                window.location = "/completed/" + url
-                                            });
-                                            
-                                            this.on("sendingmultiple", function (file, xhr, formData) {
-                                                xhr.setRequestHeader("X-CAPTCHA-KEY", $('#captcha-key').val().toString())
-                                                xhr.setRequestHeader("X-CAPTCHA-RESULT", $('#captcha-result').val().toString())
-                                            });
-                                            
-                                            this.on('error', function (file, response) {
-                                                if (response.message != null) {
-                                                    console.debug("ERROR:" + response.message);
-                                                    // $('.dz-error-message span').text(parse.message);
-                                                    $(file.previewElement)
-                                                        .find('.dz-error-message')
-                                                        .text(response.message);
-                                                }
-                                            });
-                                        },
-                                        // click upload options
-                                        uploadMultiple: true,
-                                        parallelUploads: 10,
-                                        paramName: "image",
-                                        maxFilesize: 5, // MB
-                                        acceptedFiles: "image/*",
-                                        maxFiles: 10,
-                                        dictDefaultMessage: `Drop files here or click to upload.`, // message display on drop area
-                                        dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
-                                        dictInvalidFileType: "You can't upload files of this type.",
-                                        dictFileTooBig: "File is too big . Max filesize: MiB.",
-                                        dictResponseError: "Server error: ",
-                                        dictMaxFilesExceeded: "You can't upload any more files.",
-                                        dictCancelUpload: "Cancel upload",
-                                        dictRemoveFile: "Remove file",
-                                        dictCancelUploadConfirmation: "You really want to delete this file?",
-                                        dictUploadCanceled: "Upload canceled",
-                                        addRemoveLinks: true,
-                                        accept: function (file, done) {
-                                            done()
-                                        },
-                                    });
-                                });
-                                <!-- NOTE: if captcha set to TEST mode, you can use any values -->
-                            </script>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-
+<main role="main" class="inner cover">
+  <h1 class="cover-heading">Upload Completed</h1>
+  <p class="lead">Direct links to your uploaded pictures</p>
+  <script type="text/javascript">
+  function copyThis(e){var c=document.getElementById(e).text;var p=document.createElement("textarea");document.body.appendChild(p);p.value=c;p.select();document.execCommand("copy");document.body.removeChild(p)}
+  </script>
+  <table class="table table-dark" style="background-color: #333;">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">File</th>
+        <th scope="col">Link to file</th>
+      </tr>
+    </thead>
+    <tbody>
     
-        <div class="container shadow-lg pt-4 pb-4 mb-5 rounded main-cnt">
-            <div class="card">
-                <div class="card-body form-outline">
-                    <h4 class="card-title">Please fill captcha</h4>
-                    <div class="captcha captcha-area" style="max-width:300px;">
-                        <div class="mb-2 d-flex align-items-center">
-                            <img class="captcha-img me-2" src="/captcha/image/4a5fe3e1e6304222595a0dde9690030d2b702009/" id="captcha-image"
-                                 style="min-width:220px;"/>
-                            <button type="button"
-                                    class="btn btn-dark btn-floating mx-auto overflow-hidden d-flex justify-content-center captcha-reset-btn">
-                                <i class="fab fa fa-refresh fa-lg fa-fw" aria-hidden="true"></i>
-                            </button>
-                        </div>
-                        <div class="mb-3 ">
-                            <div class="form-outline me-2" style="max-width:220px;">
-                                <input type="hidden" id="captcha-key">
-                                <input type="text" id="captcha-result" class="form-control"/>
-                                <label class="form-label" for="captcha-result">Code</label>
-                            </div>
-                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-
+      <tr>
+        <th scope="row">1</th>
+        <td><a href="https://deposit.pictures/media/images/8b/40/71/8b407141a6d74f05809f53286593e79a.jpeg" id="link-1" target="_blank">https://deposit.pictures/media/images/8b/40/71/8b407141a6d74f05809f53286593e79a.jpeg</a></td>
+        <td><a href="#" onclick="copyThis('link-1')">Copy</a></td>
+      </tr>
+        
+    </tbody>
+  </table>
+</main>
 
 
 </div>
 <footer class="text-center text-lg-start bg-light text-muted">
     <section class="d-flex justify-content-end justify-content-lg-between p-4 border-bottom">
         <div class="p-3">
-            <span>WEB BY THOMZ COPYRIGHT</span>
+            <span>Deposit Hosting - 30 days picture hosting with autodelete. 2024</span>
         </div>
     </section>
 </footer>
